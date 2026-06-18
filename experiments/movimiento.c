@@ -17,16 +17,16 @@ int main () { // funcion principal
         refresh(); // hace visible lo que acabamos de dibujar
         
         tecla = getch(); // es donde se va a guardar la tecla arriba, abajo, izquierda, derecha
-        if (tecla == KEY_UP)
+        if (tecla == KEY_UP && y > 0)
             y--;
             
-        else if (tecla == KEY_DOWN)
+        else if (tecla == KEY_DOWN && y < 20)
             y++;
             
-        else if (tecla == KEY_LEFT)
+        else if (tecla == KEY_LEFT && x > 0)
             x--;
             
-        else if (tecla == KEY_RIGHT)
+        else if (tecla == KEY_RIGHT && x < 20)
             x++;
             
         else if (tecla == 'q')
