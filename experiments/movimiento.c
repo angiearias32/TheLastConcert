@@ -6,6 +6,12 @@ int main () { // funcion principal
     int y = 10; // y es la columna de arriba y abajo
     int tecla; // variable donde espera la respuesta del usuario con la tecla
     
+    int partituraX = 15; //columna donde va a estar la partitura
+    int partituraY = 5; // fila donde estara la partitura
+    
+    int partituraRecogida = 0;
+    int contadorPartituras = 0; // cantidad de partituras recogidaas
+    
     initscr(); // toma el control de la terminal
     keypad(stdscr, TRUE); // esta funcion le dice al programa cuales teclas especiales detectar
     // stdscr es pantalla principal y TRUE significa que esta activa
@@ -26,7 +32,15 @@ int main () { // funcion principal
             
         }
         
-        mvprintw(y, x, "@"); // aqui se mueve el cursor a una posicion y escribe algo
+        if (partituraRecogida == 0)
+        {
+            mvprintw(partituraY, partituraX, "*");
+            
+        }
+        
+        mvprintw(22, 0, "Partituras: %d", contadorPartituras); // en numero entero
+        
+        mvprintw(y, x, "@"); // dibuja a la violinista
         
         refresh(); // hace visible lo que acabamos de dibujar
         
@@ -36,7 +50,6 @@ int main () { // funcion principal
             
         else if (tecla == KEY_DOWN && y < 19)
             y++;
-            
         else if (tecla == KEY_LEFT && x > 1)
             x--;
             
@@ -45,6 +58,14 @@ int main () { // funcion principal
             
         else if (tecla == 'q')
             break;
+            
+        if (x == partituraX && y == partituraY && partituraRecogida == 0) // aqui se pregunta si la columna y la fila de la violinista es la misma que la de la partitura
+        {
+        
+            partituraRecogida = 1;
+            contadorPartituras++;
+            
+        }
             
     }
     
