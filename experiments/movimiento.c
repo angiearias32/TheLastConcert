@@ -1,4 +1,4 @@
-#include <ncurses.h>  // se le dice al compilador que vamos a eusar esa biblioteca
+#include <ncurses.h>  // se le dice al compilador que vamos a usar esa biblioteca
 
 int main () { // funcion principal
 
@@ -10,32 +10,56 @@ int main () { // funcion principal
     int partituraY[5] = {3, 5, 12, 16, 18}; // fila donde estaran las partituras
     
     int partituraRecogida[5] = {0, 0, 0, 0, 0,};
-    int contadorPartituras = 0; // cantidad de partituras recogidaas
+    int contadorPartituras = 0; // cantidad de partituras recogidas
+    
+    int escenarioX = 18; //variables para crear el escenario
+    int escenarioY = 2;
     
     initscr(); // toma el control de la terminal
+    start_color(); // activa los colores en ncurses
+    
+    init_pair(1, COLOR_BLUE, COLOR_BLACK); // paredes
+    init_pair(2, COLOR_GREEN, COLOR_BLACK); // partituras
+    init_pair(3, COLOR_RED, COLOR_BLACK); // violinista
+    init_pair(4, COLOR_YELLOW, COLOR_BLACK); // escenario
+    init_pair(5, COLOR_CYAN, COLOR_BLACK); //contador
+    
     keypad(stdscr, TRUE); // esta funcion le dice al programa cuales teclas especiales detectar
     // stdscr es pantalla principal y TRUE significa que esta activa
     while (1) { // aqui se crea un ciclo infinito
         clear(); // borra la pantalla para que no quede las posiciones viejas del personaje
         
+        attron(COLOR_PAIR(1));
         for (int i = 0; i < 21; i++) {
-        
+    
+            
             mvprintw(0, i, "#"); // dibuja la pared superior
             mvprintw(20, i, "#"); // dibuja la pared inferior
             
         }
         
-        for (int i = 0; i < 21; i++) {
+        attroff(COLOR_PAIR(1));
         
+        attron(COLOR_PAIR(1));
+        for (int i = 0; i < 21; i++) {
+            
             mvprintw(i, 0, "#"); // dibuja la pared izquierda
             mvprintw(i, 20, "#"); // dibuja la pared derecha
             
         }
         
+        attroff(COLOR_PAIR(1));
+        
+        
+        attron(COLOR_PAIR(1));
         for (int i = 6; i <= 11; i++) // recorre los valores
         {
             mvprintw(8, i, "#");
         }
+        attroff(COLOR_PAIR(1));
+        
+        
+        attron(COLOR_PAIR(2));
         
         for (int i = 0; i < 5; i++) // se dibuja partituras sin recoger
         {
@@ -46,16 +70,35 @@ int main () { // funcion principal
             
             }
         }
+        
+        attroff(COLOR_PAIR(2));
+        
+        attron(COLOR_PAIR(4) | A_BOLD);
+        
+        if (contadorPartituras == 5)
+        {
+            mvprintw(escenarioY, escenarioX, "E");
+        }
+        attroff(COLOR_PAIR(4) | A_BOLD);
+        
+        attron(COLOR_PAIR(5));
+        
         mvprintw(22, 0, "Partituras: %d", contadorPartituras); // en numero entero
         
+        attroff(COLOR_PAIR(5));
+        
+        attron(COLOR_PAIR(3) | A_BOLD);
+        
         mvprintw(y, x, "@"); // dibuja a la violinista
+        
+        attroff(COLOR_PAIR(3) | A_BOLD);
         
         refresh(); // hace visible lo que acabamos de dibujar
         
         tecla = getch(); // es donde se va a guardar la tecla arriba, abajo, izquierda, derecha
         if (tecla == KEY_UP && y > 1)// pregunta si el siguiente espacio esta libre
         {
-            if (!(y - 1 == 8 && x >= 6 && x <= 11)) 
+            if (!(y - 1 == 8 && x >= 6 && x <= 11)) // si esta libre para subir
             {
                 y--;
             }
@@ -63,26 +106,26 @@ int main () { // funcion principal
             
         else if (tecla == KEY_DOWN && y < 19)
         {
-            if (!(y + 1 == 8 && x >= 6 && x <= 11))
+            if (!(y + 1 == 8 && x >= 6 && x <= 11)) // si esta libre para bajar
             {
                 y++;
             }
         }
-        else if (tecla == KEY_LEFT && x > 1)
+        else if (tecla == KEY_LEFT && x > 1) // si esta libre hacia la izquierda
         {
             if (!(y == 8 && x -1 >= 6 && x - 1 <= 11))
             {
                 x--;
             }
         }
-        else if (tecla == KEY_RIGHT && x < 19)
+        else if (tecla == KEY_RIGHT && x < 19) // si esta libre hacia la derecha
         {
             if (!(y == 8 && x + 1 >= 6 && x + 1 <= 11))
             {
                 x++;
             }
         }
-        else if (tecla == 'q')
+        else if (tecla == 'q') // se presiona q para salir del juego
             break;
             
         for (int i = 0; i < 5; i++) // se revisa si se recogio la partitura
@@ -94,14 +137,17 @@ int main () { // funcion principal
             }
             
         }
-        if (contadorPartituras == 5) // pregunta si recogio las 5 
+        
+        if (contadorPartituras == 5 &&
+            x == escenarioX && y == escenarioY)
         {
-            clear(); // borra el escenario
-            
+        
+            clear();
+          
             mvprintw(10, 3, "Felicidades!"); // mensaje de victoria
-            mvprintw(11, 3, "Recuperaste todas las partituras.");
+            mvprintw(11, 3, "Llegaste a tu ultimo concierto.");
             mvprintw(13, 3, "Presiona cualquier tecla para salir.");
-            
+   
             refresh(); // hace que se vea el mensaje 
             getch(); //espera que el ususario presione una tecla
             
