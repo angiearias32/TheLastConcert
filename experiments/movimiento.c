@@ -1,4 +1,11 @@
 #include <ncurses.h>  // se le dice al compilador que vamos a usar esa biblioteca
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_mixer.h>
+#include <json-c/json.h>
+
+Mix_Music *musica = NULL;
+Mix_Chunk *sonidoPartitura = NULL;
+Mix_Chunk *sonidoVictoria = NULL;
 
 int main () { // funcion principal
 
@@ -15,7 +22,22 @@ int main () { // funcion principal
     int escenarioX = 18; //variables para crear el escenario
     int escenarioY = 2;
     
+    SDL_Init(SDL_INIT_AUDIO);
+    
+    Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048);
+    
     initscr(); // toma el control de la terminal
+    musica = Mix_LoadMUS("assets/sounds/freesound_community-piano_violin-freesound-26340.mp3");
+
+    sonidoPartitura = Mix_LoadWAV("assets/sounds/lumora_studios-pixel-coin-collect-197952.mp3");
+    Mix_VolumeChunk(sonidoPartitura, 80);
+
+    sonidoVictoria = Mix_LoadWAV("assets/sounds/u_it78ck90s3-orchestral-win-331233.mp3");
+
+    Mix_PlayMusic(musica, -1);
+    
+    Mix_VolumeMusic(40);
+     
     start_color(); // activa los colores en ncurses
     
     init_pair(1, COLOR_BLUE, COLOR_BLACK); // paredes
@@ -134,6 +156,8 @@ int main () { // funcion principal
             {
                 partituraRecogida[i] = 1;
                 contadorPartituras++;
+                
+                Mix_PlayChannel(-1, sonidoPartitura, 0);
             }
             
         }
@@ -142,6 +166,26 @@ int main () { // funcion principal
             x == escenarioX && y == escenarioY)
         {
         
+            json_object *resultado = json_object_new_object();
+
+            json_object_object_add(resultado, "partituras_recogidas", json_object_new_int(contadorPartituras));
+
+            json_object_object_add(resultado, "concierto_alcanzado", json_object_new_boolean(1));
+
+            FILE *archivo = fopen("resultado.json", "w");
+
+            json_object_to_file_ext("resultado.json", resultado, JSON_C_TO_STRING_PRETTY);
+
+            fclose(archivo);
+
+            json_object_put(resultado);
+
+            
+            
+            Mix_HaltMusic(); // aqui se detiene la musica de fondo para reproducir la de victoria
+            
+            Mix_PlayChannel(-1, sonidoVictoria, 0);
+            
             clear();
           
             mvprintw(10, 3, "Felicidades!"); // mensaje de victoria
