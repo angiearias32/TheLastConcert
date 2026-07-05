@@ -51,6 +51,20 @@ Para eliminar el ejecutable generado:
 make clean
 ```
 
+## Diseño del proyecto
+
+El proyecto está organizado de la siguiente manera:
+
+- src/: contiene el código fuente principal del juego.
+- include/: archivos de cabecera.
+- assets/: recursos utilizados por el juego, como sonidos.
+- docs/: documentación del proyecto.
+- experiments/: pruebas realizadas durante el desarrollo.
+
+El juego utiliza la biblioteca ncurses para la interfaz en terminal, SDL2_mixer para la reproducción de música y efectos de sonido, y json-c para almacenar el resultado final del juego en un archivo JSON.
+
+
+
 ## Controles
 
 - Flechas del teclado: mover a la violinista.
